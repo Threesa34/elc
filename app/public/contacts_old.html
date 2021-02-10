@@ -1,0 +1,310 @@
+<div class="wrapper">
+    <div ng-include="'./public/navbar.html'"></div>
+
+
+    <!-- The Modal -->
+    <div class="modal fade" id="myModalImportContacts">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Import Contacts</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    
+
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                          <a class="nav-link active" data-toggle="tab" ng-click="SwitchTab('excel','csv')">Excel</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" data-toggle="tab" ng-click="SwitchTab('csv','excel')">CSV</a>
+                        </li>
+                      </ul>
+
+                      <!-- Tab panes -->
+                    <div >
+                        <div ng-show="excel" class="container tab-pane"><br>
+                       
+                            <div class="row">
+                                <div class="col-4 col-md-4 col-lg-4">
+                                    <a href="./files/contacts.xlsx" style="text-decoration:none;color:black;"  download><i class="fa fa-download" style="font-size:50px;"></i>
+                                        <br>
+                                        <b>Download excel file</b>
+                                    </a>
+                                </div>
+                                <div class="col-8 col-md-8 col-lg-8 col-xl-8">
+                                    <div class="custom-file mb-3">
+                                        <input type="file" class="custom-file-input" id="customFile" name="filename"
+                                            onchange="angular.element(this).scope().UploadFile(this.files)">
+                                        <label class="custom-file-label" for="customFile">Choose file</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="text-danger">{{errormsg}}</label>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div ng-show="csv" class="container tab-pane "><br>
+                          
+                            <div class="row">
+                                <div class="col-4 col-md-4 col-lg-4">
+                                    <a href="" ng-click="DownloadSampleCSV()" style="text-decoration:none;color:black;"  download><i class="fa fa-download" style="font-size:50px;"></i>
+                                        <br>
+                                        <b>Download CSV file</b>
+                                    </a>
+                                </div>
+                                <div class="col-8 col-md-8 col-lg-8 col-xl-8">
+                                    <div class="custom-file mb-3">
+                                        <input type="file" class="form-control" id="bulkDirectFile" placeholder="Choose CSV file" ng-model="prd.bulk_direct_file" required accept=".csv">
+                                        <!-- <label class="custom-file-label" for="customFile">Choose file</label> -->
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="text-danger">{{errormsg}}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                   
+
+
+
+                    <div class="row border-top" ng-init="setSettingBehavior('default')">
+                        <div class="btn-group p-2">
+                            <button type="button" ng-click="setSettingBehavior('default')" class="btn btn-primary btn-sm">Default</button>
+                            <button type="button" ng-click="setSettingBehavior('custome')" class="btn btn-primary btn-sm d-none">Custome</button>
+                          </div>
+                    </div>
+
+                    <div class="row border-top" ng-if="settingBehavior == 'default'">
+
+                        <div class="col-md-12 col-12">
+                            <p>Default structur for import data from first sheet is:</p>
+                            <table class="table">
+                                <thead>
+                                    <th>Name (A)</th>
+                                    <th>Gender (B)</th>
+                                    <th>Email (C)</th>
+                                    <th>Mobile No. (D)</th>
+                                    <th>Alt. Mobile No. (E)</th>
+                                </thead>
+                            </table>
+                        </div>
+
+
+                    </div>
+                    <div class="row border-top" ng-if="settingBehavior == 'custome'">
+                        <div class="col-12 col-md-12 col-lg-12"><strong><i class="fa fa-cog"
+                                    aria-hidden="true"></i>&nbsp;Setting</strong></div>
+                        <div class="col-12 col-md-12 col-lg-12">
+                            <p>
+                                Select Excel column for respected field in application.
+                            </p>
+                        </div>
+
+                        <div class="col-12 text-center" ng-if="showspinner">
+                            <strong><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Please wait..</strong>
+                        </div>
+                        <div class="col-12 col-md-12 col-lg-12" ng-show="sheetName.length > 0">
+                            <div class="col-12 col-md-12 col-lg-12">
+                                <div class="form-group">
+                                    <label for="sheetname">Select Sheet:</label>
+                                    <select class="form-control" id="sheetname" ng-model="selectedSheet"
+                                        ng-options="obj for obj in sheetName"
+                                        ng-change="getdataFromSheet(selectedSheet)">
+                                        <option value="" selected disabled>--Select--</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-12 col-lg-12" ng-show="selectedSheet">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <tbody>
+                                            <tr ng-repeat="_data in CustomersFields">
+                                                <td><label>{{_data.title}}</label></td>
+                                                <td>
+                                                    <select class="form-control" ng-model="_data.excelField"
+                                                        ng-change="setColumnForField(_data)">
+                                                        <option value="" selected>--Select--</option>
+                                                        <option  ng-repeat="_obj in ExcelFields" value="_obj.field" ng-disabled="_obj.disabled">{{_obj.title}}</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                       
+
+
+                    </div>
+
+                </div>
+
+                 <!-- Modal footer -->
+                 <div class="modal-footer"  ng-show="excel">
+                    <button type="button"  class="btn btn-success" ng-click="ImportContactData()" ng-disabled="startImport"><span ng-if="startImport"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Importing data Please wait..</span><span ng-if="!startImport">Import</span></button>
+
+                    
+
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+                 <div class="modal-footer"  ng-show="csv">
+                    <button type="button"  class="btn btn-success" ng-click="ImportCsvContactData()" ng-disabled="startImport"><span ng-if="startImport"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Importing data Please wait..</span><span ng-if="!startImport">Import</span></button>
+
+                    
+
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container-fluid section">
+
+        <div class="row mb-1">
+            <div class="col-md-12 col-lg-12 col-12">
+                <h4>Contacts</h4>
+            </div>
+           
+            <div class="col-md-12 col-lg-12 col-12 mt-2">
+                <div class="row">
+                    <div class="col-md-4 col-lg-4 col-sm-6 col-12">
+                        <button class="btn btn-info btn-sm" ng-click="AddNewContact()">Add Contact</button>
+                        <button class="btn btn-info btn-sm" data-toggle="modal"
+                            data-target="#myModalImportContacts">Import Contacts</button>
+                        <button class="btn btn-info btn-sm" ng-if="selectedContacts.length > 0" ng-click="DeleteSelectedContacts()">Delete Contacts</button>
+                    </div>
+                    <div class="col-md-6 col-lg-4 col-sm-6 col-12 ml-auto mt-1">
+                        <div class="row">
+                                <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <button class="btn btn-sm btn-secondary" ng-click="getContactList();filter = {}"><i class="fa fa-times" aria-hidden="true"></i></button>       
+                                        </div>
+                                        <div class="input-group-prepend">
+                                                <select class="form-control btn-sm" ng-model="filter.field" ng-options="obj.field as obj.title for obj in CustomersFields">
+                                                    <option value="" selected disabled>--select--</option>
+                                                </select>
+                                            </div>
+                                    <input class="form-control btn-sm" ng-model="filter.searchinput" placeholder="Search">
+                                    <div class="input-group-append" style="cursor: pointer;" >
+                                      <button class="btn btn-sm btn-info" ng-click="FilterResult(filter)" ng-disabled="!filter.field && !filter.searchinput"> <i class="fa fa-filter" aria-hidden="true"></i> Filter</button>
+                                    </div>
+                                  </div>
+                        </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="row ml-auto mr-auto mb-1 mt-1">
+                <div class="col-md-8 col-12 text-center">
+        
+                    <ul uib-pagination total-items="bigTotalItems" ng-model="bigCurrentPage" items-per-page="50" max-size="maxSize" ng-click="getContactListFromPagination(bigCurrentPage)" class="pagination-sm" boundary-links="true" force-ellipses="true"></ul>
+        
+                
+                </div>
+                <div class="col-md-4 col-12">
+                    <div class="input-group mt-2">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-sm btn-secondary" ng-click="search.name = undefined"><i class="fa fa-times" aria-hidden="true"></i></button>       
+                        </div>
+                  <input class="form-control btn-sm" ng-model="search.name" placeholder="Search">
+        </div>
+                
+                </div>
+            </div>
+        
+
+        <div class="row" style="font-size: 12px;">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-condensed">
+                    <thead class="text-center">
+                        <th>#</th>
+                        <!-- <th></th> -->
+                        <th>Name</th>
+                        <th style="width: 35px;">Gender</th>
+                        <th style="width: 60px;">Mobile</th>
+                        <th style="width: 60px;">Alt.Mobile</th>
+                        <th>Email</th>
+                        <th></th>
+                    </thead>
+                    <tbody ng-init="getContactList()">
+                        <tr ng-repeat="data in contactsList | filter: search.name track by $index" ng-include="getTemplate(data)" ng-class="{'bg-info':CheckRowExist(data)}">
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <script type="text/ng-template" id="display">
+            <td ng-click="selectDeselectItem(data)" >{{$index +1}}</td>
+           <!--  <td><div class="form-check">
+                <label class="form-check-label">
+                  <input type="checkbox"  ng-click="selectDeselectItem(data)" class="form-check-input">
+                </label>
+              </div></td> -->
+        <td ng-click="selectDeselectItem(data)" >{{data.name}}</td>
+        <td ng-click="selectDeselectItem(data)" >{{data.gender}}</td>
+        <td ng-click="selectDeselectItem(data)" >{{data.mobile1}}</td>
+        <td ng-click="selectDeselectItem(data)" >{{data.mobile2}}</td>
+        <td ng-click="selectDeselectItem(data)" >{{data.email}}</td>
+        <td class="text-center">
+
+            <i class="fa fa-pencil text-warning" aria-hidden="true" style="cursor:pointer" ng-click="editContact(data)"></i>
+            
+            &nbsp;
+            <i class="fa fa-trash text-danger" style="cursor:pointer" aria-hidden="true" ng-click="deleteContactDetails(data.id)"></i>
+
+            &nbsp;
+            <i class="fa fa-clone text-secondary" style="cursor:pointer" aria-hidden="true" ng-click="CopyContacttoNearest(data)"></i>
+
+           <!--  <button class="btn btn-warning btn-sm" ng-click="editContact(data)">Edit</button>
+            <button class="btn btn-danger btn-sm" ng-click="deleteContactDetails(data.id)">Delete</button>
+            <button class="btn btn-secondary btn-sm" ng-click="CopyContacttoNearest(data)">Copy To Nearest</button> -->
+        </td>
+    </script>
+        <script type="text/ng-template" id="edit">
+            <td>{{$index +1}}</td>
+            <!-- <td><div class="form-check">
+                <label class="form-check-label">
+                  <input type="checkbox" ng-model="data.bool" ng-click="selectDeselectItem(data)" class="form-check-input">
+                </label>
+              </div></td> -->
+       <td><input class="form-control btn-sm" placeholder="Name" ng-model="data.name" autocomplete="off" autofocus/></td>
+       <td><select class="form-control btn-sm" ng-model="data.gender" ng-options="obj for obj in ['Male','Female','Other']">
+        <option value="" selected disabled>--Select--</option>
+    </select></td>
+    <td><input class="form-control btn-sm" ng-model="data.mobile1" maxlength="12" placeholder="Mobile No." autocomplete="off"></td>
+    <td><input class="form-control btn-sm" ng-model="data.mobile2" maxlength="12" placeholder="Alt. Mobile No." autocomplete="off"></td>
+    <td><input type="email" class="form-control btn-sm" ng-model="data.email" placeholder="Email" autocomplete="off"></td>
+        <td class="text-center">
+
+            <i class="fa fa-floppy-o text-success" aria-hidden="true" style="cursor:pointer" ng-click="saveContact($index)"></i>
+                &nbsp;
+            <i class="fa fa-refresh text-info" aria-hidden="true" style="cursor:pointer" ng-click="reset()"></i>
+
+            <!-- <button class="btn btn-success btn-sm" ng-click="saveContact($index)">Save</button>
+            <button class="btn btn-info btn-sm" ng-click="reset()">Cancel</button> -->
+        </td>
+    </script>
+
+
+    
+
+
+    </div>
+</div>

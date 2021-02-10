@@ -1,0 +1,74 @@
+<div class="wrapper">
+    <div ng-include="'./public/navbar.html'"></div>
+    <div class="container-fluid section">
+
+        <div class="row"  ng-init="getBirthdaysList()">
+            <div class="col-md-12 col-lg-12 col-12">
+                <h4>Birthdays</h4>
+            </div>
+
+            <div class="col-md-12 col-lg-12 col-12  mt-2">
+                <div class="row">
+                    <div class="col-md-4 col-4">
+                        <!-- <button class="btn btn-sm btn-info">Wish All</button> -->
+                    </div>
+                    <div class="col-md-4 col-8 ml-auto">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-sm btn-secondary" ng-click="search.name = undefined"><i
+                                        class="fa fa-times" aria-hidden="true"></i></button>
+                            </div>
+                            <input class="form-control btn-sm" ng-model="search.name" placeholder="Search">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-2" style="font-size: 12px;">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-condensed">
+                    <thead class="text-center">
+                        <th>#</th>
+                        <th>Yadi No.</th>
+                       <!--  <th>SR.No.</th>
+                        <th>RCT.No.</th> -->
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Mobile No.</th>
+                        <th>Alt. Mobile No.</th>
+                        <th>Email</th>
+                        <!-- <th>Date of Birth</th> -->
+                        <th>Address</th>
+                        <th>Building Name</th>
+                        <th></th>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="data in birthdaysList | filter: search.name track by $index">
+                            <td>{{$index +1}}</td>
+                            <td ng-click="ShowFamilyDetails(data.familyid)">{{data.list_no}}</td>
+<!--                             <td ng-click="ShowFamilyDetails(data.familyid)">{{data.indexno}}</td>
+                            <td ng-click="ShowFamilyDetails(data.familyid)">{{data.rctno}}</td> -->
+                            <td ng-click="ShowFamilyDetails(data.familyid)">{{data.name}}</td>
+                            <td ng-click="ShowFamilyDetails(data.familyid)">{{data.gender}}</td>
+                            <td ng-click="ShowFamilyDetails(data.familyid)">{{data.mobile1}}</td>
+                            <td ng-click="ShowFamilyDetails(data.familyid)">{{data.mobile2}}</td>
+                            <td ng-click="ShowFamilyDetails(data.familyid)">{{data.email}}</td>
+                            <!-- <td ng-click="ShowFamilyDetails(data.familyid)">{{data.dob | date:'dd/MM/yyyy'}}</td> -->
+                            <td ng-click="ShowFamilyDetails(data.familyid)">{{data.address}}</td>
+                            <td ng-click="ShowFamilyDetails(data.familyid)">{{data.building}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+     
+
+        <div class="col-12" ng-if="birthdaysList.length == 0">
+            <div class="alert alert-danger text-center">
+                <strong>No record found!</strong>
+              </div>
+        </div>
+    </div>
+</div>

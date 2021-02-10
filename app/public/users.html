@@ -1,0 +1,107 @@
+<div class="wrapper">
+    <div ng-include="'./public/navbar.html'"></div>
+    <div class="container-fluid section">
+        <div class="row">
+            <div class="col-md-12 col-lg-12 col-12">
+                <h4>Users</h4>
+            </div>
+            <div class="col-md-4 col-lg-4 col-12 mb-1">
+                <button class="btn btn-sm btn-info" ng-click="UserDetails = []" data-toggle="modal" data-target="#modalUserDetails">Add
+                    New</button>
+               <!--  <button class="btn btn-sm btn-info" data-toggle="modal"
+                    data-target="#ModalImportUsersDetails">Upload</button> -->
+            </div>
+            <div class="col-md-3 lg-3 xl-3 col-12 ml-auto">
+                <input class="form-control" placeholder="Search" ng-model="search.name"/>
+            </div>
+        </div>
+
+        <div class="row mt-3" ng-init="getUserList()">
+            <div class="col-12 col-md-12 col-lg-12">
+                <div class="table-responsive">
+                    <table id="example" class="table table-striped table-bordered text-nowrap" style="width: 100%;">
+                        <thead>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Mobile</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th></th>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="_data in UsersList | filter: search.name">
+                                <td>{{$index +1}}</td>
+                                <td>{{_data.name}}</td>
+                                <td>{{_data.mobile}}</td>
+                                <td>{{_data.email}}</td>
+                                <td>{{getUserRole(_data.role)}}</td>
+                                <td class="text-center text-nowrap"><button class="btn btn-warning btn-sm" ng-click="getUserDetails(_data)"  data-toggle="modal" data-target="#modalUserDetails"><i class="fa fa-pencil"></i> Edit</button>&nbsp;<button class="btn btn-danger btn-sm"  ng-if="_data.role != 'Superadmin'" ng-click="deleteUserDetails(_data.id)"><i class="fa fa-trash"></i> Delete</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- The Modal add User details-->
+<div class="modal fade" id="modalUserDetails">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">User Details</h4>
+                <button type="button" class="close" data-dismiss="modal">×</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <form class="form" name="form">
+                            <div class="form-group">
+                                <label for="name">Name:</label>
+                                <input type="text" class="form-control" ng-model="UserDetails[0].name" id="name"
+                                    name="Name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="mibile">Mobile No.:</label>
+                                <input type="number" class="form-control" ng-model="UserDetails[0].mobile" id="mibile"
+                                    name="mibile" ng-blur="VerifyUserContacts()" required>
+                                    <label class="text-danger" ng-if="mobileexist">
+                                        {{mobileexist}}
+                                    </label>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email:</label>
+                                <input type="email" class="form-control" ng-model="UserDetails[0].email" id="email"
+                                    name="email" ng-blur="VerifyUserContacts()" required>
+                                    <label class="text-danger" ng-if="emailexist">
+                                        {{emailexist}}
+                                    </label>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Role:</label>
+                                <select class="form-control" ng-model="UserDetails[0].role" ng-options="obj.value as obj.title for obj in userRoles">
+                                    <option selected disabled value="">User Role</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal" ng-disabled="form.$invalid || (emailexist || mobileexist)"
+                    ng-click="SaveUserDetails()">Save</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,103 @@
+<div class="wrapper">
+    <div ng-include="'./public/navbar.html'"></div>
+    <div class="container-fluid section">
+        <div class="row">
+            <div class="col-md-12 col-lg-12 col-12">
+                <h4>Yadi Numbers</h4>
+            </div>
+            <div class="col-md-4 col-lg-4 col-12 mb-1">
+                <button class="btn btn-sm btn-info" ng-click="ListDetails = []" data-toggle="modal" data-target="#modalListDetails">Add
+                    New</button>
+               <!--  <button class="btn btn-sm btn-info" data-toggle="modal"
+                    data-target="#ModalImportlDetails">Upload</button> -->
+            </div>
+            <div class="col-md-3 lg-3 xl-3 col-12 ml-auto">
+                <input class="form-control" placeholder="Search" ng-model="search.name"/>
+            </div>
+        </div>
+
+        <div class="row mt-3" ng-init="getListRecord();getUserList()">
+            <div class="col-12 col-md-12 col-lg-12">
+                <div class="table-responsive">
+                    <table id="example" class="table table-striped table-bordered text-nowrap" style="width: 100%;">
+                        <thead>
+                                <th>#</th>
+                                <th>Yadi No.</th>
+                                <th>Old Yadi No.</th>
+                                <th>Allocated Users</th>
+                                <th></th>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="_data in listNosList | filter: search.name">
+                                <td>{{$index +1}}</td>
+                                <td>{{_data.listno}}</td>
+                                <td>{{_data.oldlistno}}</td>
+                                <td></td>
+                                <td class="text-center text-nowrap"><button class="btn btn-warning btn-sm" ng-click="getListRecordDetails(_data.id)"  data-toggle="modal" data-target="#modalListDetails"><i class="fa fa-pencil"></i> Edit</button>&nbsp;<button class="btn btn-danger btn-sm"  ng-if="_data.role != 'Superadmin'" ng-click="deleteListDetails(_data.id)"><i class="fa fa-trash"></i> Delete</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- The Modal add User details-->
+<div class="modal fade" id="modalListDetails">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Yadi Details</h4>
+                <button type="button" class="close" data-dismiss="modal">×</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <form class="form" name="form">
+                            <div class="form-group">
+                                <label for="listno">Yadi Number:</label>
+                                <input type="text" class="form-control" ng-model="ListDetails[0].listno" id="listno"
+                                    name="listno" placeholder="Yadi No." required>
+                            </div>
+                              <div class="col-md-12 col-12 border-bottom">
+                                  <label>User Allocation</label>
+
+                                  <div class="form-group">
+                                    <label for="userallocation">Search User:</label>
+                                    <input class="form-control" id="userallocation" ng-model="selecteduser"  uib-typeahead="_users as _users.name for _users in UsersList | filter:$viewValue" typeahead-on-select="allocateUserForList(selecteduser)">
+
+                                    <div class="row mt-3 text-left">
+                                            <ul>
+                                                <li  ng-repeat="_chips in ListusersAllocation" class="chip ml-1">
+                                                    
+                                                    {{_chips.name}} &nbsp; <i class="fa fa-times-circle text-secondary" aria-hidden="true" ng-click="RemoveUserFromList(_chips.id,ListDetails[0].id)"></i>
+                                                      
+                                                </li>
+                                            </ul>
+                                    </div>
+                                </div>
+
+                                 
+                              </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal" ng-disabled="form.$invalid || (emailexist || mobileexist)"
+                    ng-click="SaveListDetails()">Save</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+

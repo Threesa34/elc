@@ -1,0 +1,28 @@
+[
+    {
+        "Query":"CREATE TABLE IF NOT EXISTS `users` ( `id` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(1000) NULL , `email` VARCHAR(1000) NULL , `mobile` BIGINT NULL , `role` VARCHAR(100) NULL , `status` INT NOT NULL DEFAULT '0' , `password` VARCHAR(200) NULL , `createddate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , `createdby` INT NULL,`deviceid` VARCHAR(500) NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;ALTER TABLE `users` ADD IF NOT EXISTS `firstlogin` INT NULL DEFAULT NULL AFTER `password`;ALTER TABLE `users` ADD IF NOT EXISTS `customerid` INT NULL DEFAULT NULL AFTER `role`;INSERT INTO `users` (`name`,`email`,`mobile`,`role`,`password`) SELECT * FROM (SELECT 'Mayur Mhatre', 'mhatre975@gmail.com', 9768241151,'Superadmin','fb3d0d8964e294bf48135ca3ad0f183c') AS tmp WHERE NOT EXISTS (SELECT name FROM `users` WHERE `email` = 'mhatre975@gmail.com' AND `mobile` = 9768241151) LIMIT 1;"
+    }
+    ,
+    {
+        "Query":"CREATE TABLE IF NOT EXISTS `contacts` ( `id` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(1000) NULL , `gender` VARCHAR(1000) NULL ,`email` VARCHAR(1000) NULL , `mobile1` BIGINT NULL ,  `mobile2` BIGINT NULL, `dob` DATETIME NULL, `createddate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , `createdby` INT NULL, PRIMARY KEY (`id`)) ENGINE = InnoDB;"
+    }
+    ,
+    {
+        "Query":"CREATE TABLE IF NOT EXISTS `voters` ( `id` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(1000) NULL , `email` VARCHAR(1000) NULL , `mobile1` BIGINT NULL ,  `mobile2` BIGINT NULL, `dob` DATETIME NULL,`gender` VARCHAR(1000) NULL , `address` VARCHAR(2000) NULL,`listno` INT NULL,`rctno` VARCHAR(500) NULL,`indexno` VARCHAR(500) NULL, `createddate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , `createdby` INT NULL, PRIMARY KEY (`id`)) ENGINE = InnoDB;ALTER TABLE `voters` ADD IF NOT EXISTS `building` VARCHAR(1000) NULL DEFAULT NULL AFTER `address`;ALTER TABLE `voters` ADD IF NOT EXISTS `status` INT NOT NULL DEFAULT '0' AFTER `building`;ALTER TABLE `voters` ADD IF NOT EXISTS `remark` VARCHAR(100) NULL DEFAULT NULL AFTER `status`;ALTER TABLE `voters` ADD IF NOT EXISTS `familyid` INT NULL DEFAULT NULL AFTER `remark`;ALTER TABLE `voters` ADD IF NOT EXISTS `note` VARCHAR(1000) NULL DEFAULT NULL AFTER `familyid`;"
+    }
+    ,
+    {
+        "Query":"CREATE TABLE IF NOT EXISTS `voters_family` ( `id` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(1000) NULL , `voterid` INT NULL , `createddate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , `createdby` INT NULL, PRIMARY KEY (`id`)) ENGINE = InnoDB;"
+    }
+   
+    ,
+    {
+        "Query":"CREATE TABLE IF NOT EXISTS `listnos` ( `id` INT NOT NULL AUTO_INCREMENT , `listno` VARCHAR(1000) NULL , `oldlistno` VARCHAR(1000) NULL, `createddate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ,`modifieddate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , `createdby` INT NULL, PRIMARY KEY (`id`)) ENGINE = InnoDB;"
+    }
+    ,
+    {
+        "Query":"CREATE TABLE IF NOT EXISTS `listallocation` ( `id` INT NOT NULL AUTO_INCREMENT , `listid` INT NULL , `userid` INT NULL, `createddate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , `createdby` INT NULL, PRIMARY KEY (`id`)) ENGINE = InnoDB;"
+    }
+   
+  
+]

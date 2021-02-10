@@ -1,0 +1,421 @@
+<div class="wrapper">
+    <div ng-include="'./public/navbar.html'"></div>
+
+
+    <!-- The Modal -->
+    <div class="modal fade" id="myModalCreateFamily">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Family Members</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div class="col-md-12 col-12">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <tbody>
+                                    <tr ng-repeat="_family in ConfirmFamily">
+                                        <td>{{_family.listno}}</td>
+                                        <td>{{_family.indexno}}</td>
+                                        <td>{{_family.rctno}}</td>
+                                        <td>{{_family.name}}</td>
+                                        <td>{{_family.gender}}</td>
+                                        <td>{{_family.mobile1}}</td>
+                                        <td>&nbsp;<i class="fa fa-trash text-danger" aria-hidden="true"
+                                                ng-click="RemoveFromFamily(_family)"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" ng-if="ConfirmFamily[0].familyid" class="btn btn-info" data-dismiss="modal"
+                        ng-click="addNewMemeber()">Add new Member</button>
+                    <button type="button" class="btn btn-success" ng-click="CreateFamily()">Save</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- The Modal -->
+    <div class="modal fade" id="myModalImportVoterContacts">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Import Contacts</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-4 col-md-4 col-lg-4">
+                            <a href="./files/voter_list.xlsx" style="text-decoration:none;color:black;" download><i
+                                    class="fa fa-download" style="font-size:50px;"></i>
+                                <br>
+                                <b>Download excel file</b>
+                            </a>
+                        </div>
+                        <div class="col-8 col-md-8 col-lg-8 col-xl-8">
+                            <div class="custom-file mb-3">
+                                <input type="file" class="custom-file-input" id="customFile" name="filename"
+                                    onchange="angular.element(this).scope().UploadFile(this.files)">
+                                <label class="custom-file-label" for="customFile">Choose file</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="text-danger">{{errormsg}}</label>
+                        </div>
+                    </div>
+
+                    <div class="row border-top" ng-init="setSettingBehavior('default')">
+
+                        <div class="btn-group p-2">
+                            <button type="button" ng-click="setSettingBehavior('default')"
+                                class="btn btn-primary btn-sm">Default</button>
+                            <button type="button" ng-click="setSettingBehavior('custome')"
+                                class="btn btn-primary btn-sm d-none">Custome</button>
+                        </div>
+                    </div>
+
+                    <div class="row border-top" ng-if="settingBehavior == 'default'">
+
+                        <div class="col-md-12 col-12">
+                            <p>Default structur for import data from first sheet is:</p>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <th>Yadi No. (A)</th>
+                                        <th>SR. No. (B)</th>
+                                        <th>RCT.No. (C)</th>
+                                        <th>Name (D)</th>
+                                        <th>Gender (E)</th>
+                                        <th>Email (F)</th>
+                                        <th>Mobile No. (G)</th>
+                                        <th>Alt. Mobile No. (H)</th>
+                                        <th>Date of Birth (I)</th>
+                                        <th>Address (J)</th>
+                                        <th>Building Name (K)</th>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="row border-top" ng-if="settingBehavior == 'custome'">
+                        <div class="col-12 col-md-12 col-lg-12"><strong><i class="fa fa-cog"
+                                    aria-hidden="true"></i>&nbsp;Setting</strong></div>
+                        <div class="col-12 col-md-12 col-lg-12">
+                            <p>
+                                Select Excel column for respected field in application.
+                            </p>
+                        </div>
+
+                        <div class="col-12 text-center" ng-if="showspinner">
+                            <strong><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Please wait..</strong>
+                        </div>
+                        <div class="col-12 col-md-12 col-lg-12" ng-show="sheetName.length > 0">
+                            <div class="col-12 col-md-12 col-lg-12">
+                                <div class="form-group">
+                                    <label for="sheetname">Select Sheet:</label>
+                                    <select class="form-control" id="sheetname" ng-model="selectedSheet"
+                                        ng-options="obj for obj in sheetName"
+                                        ng-change="getdataFromSheet(selectedSheet)">
+                                        <option value="" selected disabled>--Select--</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-12 col-lg-12" ng-show="selectedSheet">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <tbody>
+                                            <tr ng-repeat="_data in nearestContcatFields">
+                                                <td><label>{{_data.title}}</label></td>
+                                                <td>
+                                                    <select class="form-control" ng-model="_data.excelField"
+                                                        ng-change="setColumnForField(_data)">
+                                                        <option value="" selected>--Select--</option>
+                                                        <option ng-repeat="_obj in ExcelFields" value="_obj.field"
+                                                            ng-disabled="_obj.disabled">{{_obj.title}}</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                    </div>
+
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-success" ng-click="ImportVoterContactData()"
+                        ng-disabled="startImport"><span ng-if="startImport"><i class="fa fa-spinner fa-pulse"
+                                aria-hidden="true"></i> Importing data Please wait..</span><span
+                            ng-if="!startImport">Import</span></button>
+
+                    <!-- <button type="button" class="btn btn-success" ng-click="ImportContactData()">Import</button> -->
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <!-- The Modal -->
+  <div class="modal" id="myModalFilters">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title"><i class="fa fa-filter"
+            aria-hidden="true"></i> Filter</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="table-responsive">
+          	<table class="table">
+            <tr ng-repeat="_obj in FiltersObj">
+            <td ng-show="$index > 0"><select class="form-control btn-sm" ng-model="_obj.condition" ng-options="obj for obj in Conditions"><option value="" selected disabled>--select--</option></select></td>
+            <td><select class="form-control btn-sm" ng-model="_obj.field" ng-options="obj.field as obj.title for obj in nearestContcatFields" ng-change="getStoredFiledsValues(_obj.field)"><option value="" selected disabled>--select--</option></select></td>
+            
+            <td ng-show="_obj.field != 'listno' && _obj.field != 'gender'"><input class="form-control btn-sm" ng-model="_obj.searchinput" placeholder="Search"></td>
+
+            <td ng-show="_obj.field == 'listno'">
+                <select class="form-control btn-sm" ng-model="_obj.searchinput" ng-options="obj.id as obj.listno for obj in ListNumbers"><option value="" selected disabled>--select--</option></select>
+            </td>
+
+            <td ng-show="_obj.field == 'gender'">
+                <select class="form-control btn-sm" ng-model="_obj.searchinput" ng-options="obj for obj in ['Male', 'Female']"><option value="" selected disabled>--select--</option></select>
+            </td>
+
+            <td><i class="fa fa-minus-square-o text-danger" ng-click="spliceFilter($index)" aria-hidden="true"></i></td>
+            </tr>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" ng-click="FiltersObj.push({})" class="btn btn-info">Add</button>
+          <button type="button" ng-click="ApplyFilterOnRecpord()" class="btn btn-info" data-dismiss="modal">Apply</button>
+          <button type="button" ng-click="FiltersObj = [{}];filterText='';getVoterContactList();getListRecord()" class="btn btn-info" data-dismiss="modal">Clear</button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+
+    <div class="container-fluid section">
+
+        <div class="row mb-1">
+            <div class="col-md-12 col-lg-12 col-12">
+                <h4>Yadi</h4>
+            </div>
+
+            <div class="col-md-12 col-lg-12 col-12 mt-1">
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-sm-6 col-12">
+                        <button class="btn btn-info btn-sm" ng-click="AddNewVoterContact()">Add Contact</button>
+                        <button class="btn btn-info btn-sm" data-toggle="modal"
+                            data-target="#myModalImportVoterContacts">Import Contacts</button>
+
+                        <button class="btn btn-info btn-sm" ng-if="FamilyGroup.length > 0" ng-click="ConfirmToFamily()"
+                            data-toggle="modal" data-target="#myModalCreateFamily">Add
+                            to Family</button>
+
+                        <button class="btn btn-secondary btn-sm" ng-class="{'btn-info':checkFilterCount()}" data-toggle="modal" data-target="#myModalFilters"><i class="fa fa-filter"
+                                        aria-hidden="true"></i> Filter <span ng-if="checkFilterCount()">({{FiltersObj.length}})</span></button>
+                    </div>
+                    <div class="col-md-6 col-lg-4 col-sm-6 col-12 ml-auto">
+                        <!-- <div class="row"> -->
+                     <!--    <div class="input-group">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-sm btn-secondary" ng-click="getVoterContactList();filter = {}"><i
+                                        class="fa fa-times" aria-hidden="true"></i></button>
+                            </div>
+                            <div class="input-group-prepend">
+                                <select class="form-control btn-sm" ng-model="filter.field"
+                                    ng-options="obj.field as obj.title for obj in nearestContcatFields">
+                                    <option value="" selected disabled>--select--</option>
+                                </select>
+                            </div>
+                            <input class="form-control btn-sm" ng-model="filter.searchinput" placeholder="Search">
+                            <div class="input-group-append" style="cursor: pointer;">
+                                <button class="btn btn-sm btn-info" ng-click="FilterNearestResult(filter)"
+                                    ng-disabled="!filter.field && !filter.searchinput"> <i class="fa fa-filter"
+                                        aria-hidden="true"></i> Filter</button>
+                            </div>
+                        </div> -->
+                        <!-- </div> -->
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+
+        <div class="row ml-auto mr-auto mb-1 mt-1">
+            <div class="col-md-8 col-12 text-center">
+
+                <ul uib-pagination total-items="bigTotalItems" ng-model="bigCurrentPage" items-per-page="50"
+                    max-size="maxSize" ng-click="getVoterContactListPagination(bigCurrentPage)" class="pagination-sm"
+                    boundary-links="true" force-ellipses="true"></ul>
+
+
+            </div>
+
+            <div class="col-md-4 col-12">
+                <div class="input-group mt-2">
+                    <div class="input-group-prepend">
+                        <button class="btn btn-sm btn-secondary" ng-click="search.name = undefined"><i
+                                class="fa fa-times" aria-hidden="true"></i></button>
+                    </div>
+                    <input class="form-control btn-sm" ng-model="search.name" placeholder="Search">
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="row" style="font-size: 12px;">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-condensed text-nowrap">
+                    <thead class="text-center">
+                        <th>#</th>
+                        <th></th>
+                        <th>Yadi No.</th>
+                        <th>SR.No.</th>
+                        <th>RCT.No.</th>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Mobile No.</th>
+                        <th>Alt. Mobile No.</th>
+                        <th>Email</th>
+                        <th>Date of Birth</th>
+                        <th>Address</th>
+                        <th>Building Name</th>
+                        <th>Status</th>
+                        <th>Reason</th>
+                        <th>Note</th>
+                        <th></th>
+                    </thead>
+                    <tbody ng-init="getVoterContactList();getListRecord()">
+                        <tr ng-repeat="data in voterContactsList | filter:search.name track by $index"
+                            ng-include="getTemplate(data)" ng-class="{'text-danger':data.status == 'Disable'}">
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+
+        <script type="text/ng-template" id="display">
+            <td>{{$index +1}}</td>
+        <td>
+            <input type="checkbox"  ng-model="data.bool" ng-change="CheckEntry(data)"/>
+        </td>
+        <td ng-click="ShowFamilyDetails(data.familyid)">{{data.list_no}}</td>
+        <td ng-click="ShowFamilyDetails(data.familyid)">{{data.indexno}}</td>
+        <td ng-click="ShowFamilyDetails(data.familyid)">{{data.rctno}}</td>
+        <td ng-click="ShowFamilyDetails(data.familyid)">{{data.name}}</td>
+        <td ng-click="ShowFamilyDetails(data.familyid)">{{data.gender}}</td>
+        <td ng-click="ShowFamilyDetails(data.familyid)">{{data.mobile1}}</td>
+        <td ng-click="ShowFamilyDetails(data.familyid)">{{data.mobile2}}</td>
+        <td ng-click="ShowFamilyDetails(data.familyid)">{{data.email}}</td>
+        <td ng-click="ShowFamilyDetails(data.familyid)">{{data.dob | date:'dd/MM/yyyy'}}</td>
+        <td ng-click="ShowFamilyDetails(data.familyid)">{{data.address}}</td>
+        <td ng-click="ShowFamilyDetails(data.familyid)">{{data.building}}</td>
+        <td ng-click="ShowFamilyDetails(data.familyid)">{{data.status}}</td>
+        <td ng-click="ShowFamilyDetails(data.familyid)">{{data.remark}}</td>
+        <td ng-click="ShowFamilyDetails(data.familyid)">{{data.note}}</td>
+        <td>
+            <i class="fa fa-pencil text-warning" aria-hidden="true" style="cursor:pointer" ng-click="editVoterContact(data)"></i>
+            <!-- <button class="btn btn-warning btn-sm" >Edit</button> -->
+            &nbsp;
+            <i class="fa fa-trash text-danger" style="cursor:pointer" aria-hidden="true" ng-click="deleteVoterContactDetails(data.id)"></i>
+            <!-- <button class="btn btn-danger btn-sm" ng-click="deleteVoterContactDetails(data.id)">Delete</button> -->
+        </td>
+    </script>
+        <script type="text/ng-template" id="edit">
+            <td>{{$index +1}}</td>
+            <td></td>
+       <td>
+        <select class="form-control" ng-model="data.listno" ng-options="obj.id as obj.listno for obj in listNosList">
+            <option value="" selected disabled>--Select--</option>
+        </select>
+        
+      <!--   <input class="form-control btn-sm d-none" placeholder="List No." ng-model="data.listno" autocomplete="off" autofocus/> --> 
+    </td>
+       <td><input class="form-control btn-sm" placeholder="Sr. No." ng-model="data.indexno" autocomplete="off"/></td>
+
+       <td><input class="form-control btn-sm" placeholder="RCT No." ng-model="data.rctno" autocomplete="off"/></td>
+
+       <td><input class="form-control btn-sm" placeholder="Name" ng-model="data.name" autocomplete="off"/></td>
+       <td><select class="form-control btn-sm" ng-model="data.gender" ng-options="obj for obj in ['Male','Female','Other']">
+        <option value="" selected disabled>--Select--</option>
+    </select></td>
+    <td><input class="form-control btn-sm" ng-model="data.mobile1" maxlength="12" placeholder="Mobile No." autocomplete="off"></td>
+    <td><input class="form-control btn-sm" ng-model="data.mobile2" maxlength="12" placeholder="Alt. Mobile No." autocomplete="off"></td>
+    <td><input type="email" class="form-control btn-sm" ng-model="data.email" placeholder="Email" autocomplete="off"></td>
+    <td><input class="form-control btn-sm" ui-date="dateOptionsFilters" ng-model="data.dob" placeholder="Date of Birth" autocomplete="off"></td>
+    <td style="width:200px;"><textarea class="form-control btn-sm" ng-model="data.address" placeholder="Address" autocomplete="off"></textarea></td>
+    <td><input class="form-control" ng-model="data.building" placeholder="Building Name"/></td>
+    <td>
+        <select class="form-control" ng-model="data.status" ng-options="_sts for _sts in ['Active','Disable']">
+            <option value="" selected disabled>--Select--</option>
+        </select>
+    </td>
+    <td>
+        <select class="form-control" ng-model="data.remark" ng-options="_sts for _sts in ['Shift','Death','Marriage']">
+            <option value="" selected disabled>--Select--</option>
+        </select>
+    </td>
+    <td style="width:200px;">
+        <textarea ng-model="data.note" class="form-control" placeholder="Note"></textarea>
+    </td>
+        <td>
+            
+            <i class="fa fa-floppy-o text-success" aria-hidden="true" style="cursor:pointer;" ng-click="saveVoterContact($index)"></i>
+                &nbsp;
+            <i class="fa fa-refresh text-info" style="cursor:pointer;" aria-hidden="true" ng-click="reset()"></i>
+            <!-- 
+            <button class="btn btn-success btn-sm" ng-click="saveVoterContact($index)">Save</button>
+            <button class="btn btn-info btn-sm" ng-click="reset()">Cancel</button> -->
+        </td>
+    </script>
+
+
+
+
+
+
+    </div>
+</div>
