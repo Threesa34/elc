@@ -506,6 +506,7 @@ angular.module('MyApp')
 
 
         $scope.startImportingContacts = function (excelData) {
+            console.log($scope.settingBehavior);
             if ($scope.settingBehavior == 'default') {
                 Entity.ImportContactDetails().save(excelData).$promise.then(function (response) {
                     Swal({
@@ -749,8 +750,85 @@ angular.module('MyApp')
             }
         }
 
+
+        $scope.verifyFamilyMembers = function()
+        {
+            var count = 0;
+            
+            {
+            $scope.FamilyGroup.map(function(value, index){
+                var ind = index + 1;
+                if($scope.FamilyGroup.length == ind)
+                {
+                    ind = 0  
+                }
+                if(value.familyid == $scope.FamilyGroup[ind].familyid)
+                {
+                    count = count+1;
+                }
+                if(value.familyid == null)
+                {
+                    count = count+1; 
+                }
+            });
+
+            if(count > 0)
+            return true;
+            else
+            return false;
+        }
+        return false;
+        }
+
+
+        function verifyDuplicates()
+        {
+            // Declare a new array 
+            let newArray = []; 
+              
+            // Declare an empty object 
+            let uniqueObject = {}; 
+              
+            // Loop for the array elements 
+            for (let i in $scope.ConfirmFamily) { 
+      
+                // Extract the title 
+                objTitle = $scope.ConfirmFamily[i]['id']; 
+      
+                // Use the title as the index 
+                uniqueObject[objTitle] = $scope.ConfirmFamily[i]; 
+            } 
+              
+            // Loop to push unique object into array 
+            for (i in uniqueObject) { 
+                newArray.push(uniqueObject[i]); 
+            } 
+              
+            // Display the unique objects 
+            return newArray; 
+        }
+
+        $scope.ConfirmFamily = [];
+
         $scope.ConfirmToFamily = function()
         {
+            
+            var confirmFamily = [];
+
+            
+                confirmFamily = $scope.voterContactsList.filter(function(value){
+                    return value.familyid == $scope.FamilyGroup[0].familyid;
+                });
+                if(confirmFamily.length > 1)
+                {
+                    $scope.ConfirmFamily = [];
+                    confirmFamily.map(function(value){
+                        $scope.ConfirmFamily.push(value);
+                    });
+                }
+                else
+                $scope.ConfirmFamily = [];
+
             if($scope.ConfirmFamily && $scope.ConfirmFamily.length > 0)
             {
                 $scope.FamilyGroup.map(function(value){
@@ -759,6 +837,9 @@ angular.module('MyApp')
             }
             else
             $scope.ConfirmFamily = angular.copy($scope.FamilyGroup);
+
+            $scope.ConfirmFamily = verifyDuplicates();
+
         }
 
         $scope.RemoveFromFamily = function(familyrcd)
